@@ -2,6 +2,7 @@ const axios = require('axios');
 const Dev = require('../models/Dev');
 const parseStringAsArray = require('../utils/parseStringasArray');
 
+const { findConnections, sendMessage } = require('../websocket');
 
 //index, store, show, update, destroy
 
@@ -87,6 +88,14 @@ module.exports = {
                 techs: techsArray,
                 location,
             });
+
+            const sendSocketMessageTo = findConnections(
+                { latitude, longitude },
+                techsArray,
+            );
+            
+
+            sendMessage(sendSocketMessageTo, 'new-dev', dev);
         } else {
             return response.json({message: 'Esse usuário já está cadastrado!'});
         }
